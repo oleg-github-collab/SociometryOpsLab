@@ -95,6 +95,32 @@ app.get('/debug/db', async (req, res) => {
   }
 });
 
+// Debug frontend paths
+app.get('/debug/frontend', (req, res) => {
+  const fs = require('fs');
+  const possiblePaths = [
+    path.join(__dirname, '../../frontend/dist'),
+    path.join(__dirname, '../../../frontend/dist'),
+    path.join(process.cwd(), 'frontend/dist'),
+    '/app/frontend/dist'
+  ];
+
+  const pathsInfo = possiblePaths.map(p => ({
+    path: p,
+    exists: fs.existsSync(p),
+    isDir: fs.existsSync(p) && fs.statSync(p).isDirectory(),
+    files: fs.existsSync(p) ? fs.readdirSync(p).slice(0, 10) : []
+  }));
+
+  res.json({
+    __dirname,
+    'process.cwd()': process.cwd(),
+    NODE_ENV: process.env.NODE_ENV,
+    isProduction,
+    paths: pathsInfo
+  });
+});
+
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/members', memberRoutes);
