@@ -61,7 +61,19 @@ app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  const fs = require('fs');
+  const frontendPath = path.join(__dirname, 'public');
+
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    frontend: {
+      path: frontendPath,
+      exists: fs.existsSync(frontendPath),
+      hasIndexHtml: fs.existsSync(path.join(frontendPath, 'index.html')),
+      files: fs.existsSync(frontendPath) ? fs.readdirSync(frontendPath).length : 0
+    }
+  });
 });
 
 // Debug endpoint
