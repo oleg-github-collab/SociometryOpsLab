@@ -1,0 +1,103 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique @db.VarChar(50)
+  passwordHash String   @db.VarChar(255)
+  createdAt    DateTime @default(now())
+
+  @@map("admin_users")
+}
+
+model Member {
+  id               Int           @id @default(autoincrement())
+  code             String        @unique @db.VarChar(10)
+  fullName         String        @db.VarChar(255)
+  email            String        @unique @db.VarChar(255)
+  position         String?       @db.VarChar(255)
+  experienceMonths Int?
+  employmentType   String?       @db.VarChar(50)
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  assessments      Assessment[]
+  metrics          Metric[]
+
+  @@map("members")
+}
+
+model Assessment {
+  id                  Int      @id @default(autoincrement())
+  timestamp           DateTime @default(now())
+  respondentCode      String   @db.VarChar(10)
+  fillTimeMinutes     Int?
+
+  // Competency ratings (JSONB - stores ratings for all members)
+  leadership          Json?
+  expertise           Json?
+  collaboration       Json?
+  innovation          Json?
+  reliability         Json?
+  communication       Json?
+  adaptability        Json?
+  mentorship          Json?
+
+  // Self-predictions
+  selfLeadership      Json?
+  selfExpertise       Json?
+  selfCollaboration   Json?
+
+  // Network data
+  competencyMatrix    Json?
+  frequentCollaboration Json?
+  desiredCollaboration  Json?
+  learningSources     Json?
+
+  // Team metrics
+  teamTrustIndex      Decimal? @db.Decimal(3, 2)
+  psychologicalSafety Decimal? @db.Decimal(3, 2)
+  roleSatisfaction    Decimal? @db.Decimal(3, 2)
+
+  createdAt           DateTime @default(now())
+
+  respondent          Member   @relation(fields: [respondentCode], references: [code])
+  metrics             Metric[]
+
+  @@map("assessments")
+}
+
+model Metric {
+  id                   Int      @id @default(autoincrement())
+  memberCode           String   @db.VarChar(10)
+  assessmentId         Int
+
+  // Calculated scores
+  meanRankLeadership   Decimal? @db.Decimal(4, 2)
+  meanRankExpertise    Decimal? @db.Decimal(4, 2)
+  stdLeadership        Decimal? @db.Decimal(4, 2)
+  stdExpertise         Decimal? @db.Decimal(4, 2)
+  top3CountLeadership  Int?
+  statusScore          Decimal? @db.Decimal(4, 3)
+
+  // Self-perception metrics
+  maeLeadership        Decimal? @db.Decimal(4, 2)
+  biasLeadership       Decimal? @db.Decimal(4, 2)
+  accuracyLeadership   Decimal? @db.Decimal(4, 2)
+
+  updatedAt            DateTime @updatedAt
+
+  member               Member     @relation(fields: [memberCode], references: [code])
+  assessment           Assessment @relation(fields: [assessmentId], references: [id])
+
+  @@unique([memberCode, assessmentId])
+  @@map("metrics")
+}

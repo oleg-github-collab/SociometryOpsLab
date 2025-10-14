@@ -1,0 +1,38 @@
+{
+  "name": "opslab-analytics",
+  "version": "1.0.0",
+  "description": "Team Analytics & Sociometry Platform",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "setup": "npm run install:all && cd backend && npm run prisma:generate && npm run prisma:migrate && npm run prisma:seed",
+    "prisma:studio": "cd backend && npx prisma studio"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/opslab-analytics.git"
+  },
+  "keywords": [
+    "analytics",
+    "team",
+    "sociometry",
+    "visualization",
+    "react",
+    "nodejs"
+  ],
+  "author": "OpsLab",
+  "license": "MIT"
+}
