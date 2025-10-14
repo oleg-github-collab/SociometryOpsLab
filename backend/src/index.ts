@@ -103,7 +103,27 @@ app.use('/api/metrics', metricsRoutes);
 
 // Serve frontend static files in production
 if (isProduction) {
-  const frontendPath = path.join(__dirname, '../../frontend/dist');
+  // Try multiple possible paths for frontend dist
+  const possiblePaths = [
+    path.join(__dirname, '../../frontend/dist'),
+    path.join(__dirname, '../../../frontend/dist'),
+    path.join(process.cwd(), 'frontend/dist'),
+    '/app/frontend/dist'
+  ];
+
+  let frontendPath = possiblePaths[0];
+
+  // Find the correct path
+  const fs = require('fs');
+  for (const testPath of possiblePaths) {
+    if (fs.existsSync(testPath)) {
+      frontendPath = testPath;
+      console.log(`✅ Found frontend at: ${frontendPath}`);
+      break;
+    } else {
+      console.log(`❌ Frontend not found at: ${testPath}`);
+    }
+  }
 
   // Serve static files
   app.use(express.static(frontendPath));
@@ -114,7 +134,14 @@ if (isProduction) {
     if (req.path.startsWith('/api') || req.path.startsWith('/health') || req.path.startsWith('/debug')) {
       return res.status(404).json({ error: 'Route not found' });
     }
-    res.sendFile(path.join(frontendPath, 'index.html'));
+
+    const indexPath = path.join(frontendPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      console.error(`❌ index.html not found at: ${indexPath}`);
+      res.status(404).json({ error: 'Frontend not found', path: indexPath });
+    }
   });
 } else {
   // 404 handler for development
