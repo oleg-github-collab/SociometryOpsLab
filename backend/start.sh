@@ -6,19 +6,5 @@ echo "Current directory: $(pwd)"
 echo "DATABASE_URL set: ${DATABASE_URL:+yes}"
 
 echo ""
-echo "=== Running Prisma Migrations ==="
-npx prisma migrate deploy || {
-    echo "ERROR: Migration failed!"
-    echo "Continuing anyway..."
-}
-
-echo ""
-echo "=== Seeding Database ==="
-npx prisma db seed || {
-    echo "ERROR: Seed failed!"
-    echo "Continuing anyway..."
-}
-
-echo ""
-echo "=== Starting Node Server ==="
+echo "=== Starting Node Server (DB init happens in app) ==="
 node dist/index.js

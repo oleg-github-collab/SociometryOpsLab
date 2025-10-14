@@ -12,6 +12,9 @@ import memberRoutes from './routes/members';
 import assessmentRoutes from './routes/assessments';
 import metricsRoutes from './routes/metrics';
 
+// Import DB initialization
+import { initializeDatabase } from './db-init';
+
 // Load environment variables
 dotenv.config();
 
@@ -117,12 +120,25 @@ app.use(
   }
 );
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🔗 Health check: http://localhost:${PORT}/health`);
-});
+// Initialize database and start server
+async function startServer() {
+  try {
+    console.log('Initializing database...');
+    await initializeDatabase();
+    console.log('Database initialized successfully');
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🔗 Health check: http://localhost:${PORT}/health`);
+    });
+  } catch (error) {
+    console.error('Failed to initialize database:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
