@@ -16,6 +16,9 @@
   "keywords": ["analytics", "team", "sociometry"],
   "author": "OpsLab",
   "license": "MIT",
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "dependencies": {
     "@prisma/client": "^5.7.1",
     "express": "^4.18.2",
