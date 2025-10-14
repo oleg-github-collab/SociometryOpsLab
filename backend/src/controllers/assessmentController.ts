@@ -113,13 +113,13 @@ export const createAssessment = async (req: Request, res: Response) => {
     // Convert decimals for PostgreSQL
     const assessmentData: any = { ...data };
     if (data.teamTrustIndex !== undefined) {
-      assessmentData.teamTrustIndex = new Prisma.Decimal(data.teamTrustIndex);
+      assessmentData.teamTrustIndex = data.teamTrustIndex;
     }
     if (data.psychologicalSafety !== undefined) {
-      assessmentData.psychologicalSafety = new Prisma.Decimal(data.psychologicalSafety);
+      assessmentData.psychologicalSafety = data.psychologicalSafety;
     }
     if (data.roleSatisfaction !== undefined) {
-      assessmentData.roleSatisfaction = new Prisma.Decimal(data.roleSatisfaction);
+      assessmentData.roleSatisfaction = data.roleSatisfaction;
     }
 
     const assessment = await prisma.assessment.create({
@@ -147,13 +147,13 @@ export const updateAssessment = async (req: Request, res: Response) => {
     // Convert decimals
     const updateData: any = { ...data };
     if (data.teamTrustIndex !== undefined) {
-      updateData.teamTrustIndex = new Prisma.Decimal(data.teamTrustIndex);
+      updateData.teamTrustIndex = data.teamTrustIndex;
     }
     if (data.psychologicalSafety !== undefined) {
-      updateData.psychologicalSafety = new Prisma.Decimal(data.psychologicalSafety);
+      updateData.psychologicalSafety = data.psychologicalSafety;
     }
     if (data.roleSatisfaction !== undefined) {
-      updateData.roleSatisfaction = new Prisma.Decimal(data.roleSatisfaction);
+      updateData.roleSatisfaction = data.roleSatisfaction;
     }
 
     const assessment = await prisma.assessment.update({

@@ -46,25 +46,25 @@ export const getTeamMetrics = async (req: Request, res: Response) => {
     // Calculate basic team metrics
     const teamMetrics = {
       totalMembers: members.length,
-      activeMembers: members.filter(m => m.isActive).length,
+      activeMembers: members.filter((m: any) => m.isActive).length,
       totalAssessments: assessments.length,
       averageTeamTrust: calculateMean(
         assessments
-          .map(a => a.teamTrustIndex)
-          .filter((v): v is number => v !== null)
-          .map(v => Number(v))
+          .map((a: any) => a.teamTrustIndex)
+          .filter((v: any): v is number => v !== null)
+          .map((v: any) => Number(v))
       ),
       averagePsychologicalSafety: calculateMean(
         assessments
-          .map(a => a.psychologicalSafety)
-          .filter((v): v is number => v !== null)
-          .map(v => Number(v))
+          .map((a: any) => a.psychologicalSafety)
+          .filter((v: any): v is number => v !== null)
+          .map((v: any) => Number(v))
       ),
       averageRoleSatisfaction: calculateMean(
         assessments
-          .map(a => a.roleSatisfaction)
-          .filter((v): v is number => v !== null)
-          .map(v => Number(v))
+          .map((a: any) => a.roleSatisfaction)
+          .filter((v: any): v is number => v !== null)
+          .map((v: any) => Number(v))
       ),
     };
 
@@ -103,32 +103,32 @@ export const getMemberMetrics = async (req: Request, res: Response) => {
 
     // Calculate leadership rankings for this member
     const leadershipRankings = allAssessments
-      .map(a => {
+      .map((a: any) => {
         const leadership = a.leadership as Record<string, number> | null;
         return leadership?.[code];
       })
-      .filter((v): v is number => v !== undefined && v !== null);
+      .filter((v: any): v is number => v !== undefined && v !== null);
 
     // Calculate expertise rankings
     const expertiseRankings = allAssessments
-      .map(a => {
+      .map((a: any) => {
         const expertise = a.expertise as Record<string, number> | null;
         return expertise?.[code];
       })
-      .filter((v): v is number => v !== undefined && v !== null);
+      .filter((v: any): v is number => v !== undefined && v !== null);
 
     const memberMetrics = {
       member,
       leadership: {
         meanRank: calculateMean(leadershipRankings),
         stdDev: calculateStdDev(leadershipRankings),
-        top3Count: leadershipRankings.filter(r => r <= 3).length,
+        top3Count: leadershipRankings.filter((r: number) => r <= 3).length,
         statusScore: calculateStatusScore(leadershipRankings, allAssessments.length),
       },
       expertise: {
         meanRank: calculateMean(expertiseRankings),
         stdDev: calculateStdDev(expertiseRankings),
-        top3Count: expertiseRankings.filter(r => r <= 3).length,
+        top3Count: expertiseRankings.filter((r: number) => r <= 3).length,
         statusScore: calculateStatusScore(expertiseRankings, allAssessments.length),
       },
     };
@@ -158,7 +158,7 @@ export const calculateAssessmentMetrics = async (req: Request, res: Response) =>
     });
 
     // Calculate metrics for each member based on this assessment
-    const metricsPromises = members.map(async (member) => {
+    const metricsPromises = members.map(async (member: any) => {
       const leadership = assessment.leadership as Record<string, number> | null;
       const expertise = assessment.expertise as Record<string, number> | null;
 
