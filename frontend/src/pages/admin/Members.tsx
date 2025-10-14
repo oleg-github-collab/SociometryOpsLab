@@ -3,12 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { membersApi } from '../../utils/api';
-import type { Member, MemberFormData } from '../../types';
 
 export default function AdminMembers() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -16,12 +14,11 @@ export default function AdminMembers() {
     queryFn: () => membersApi.getAll({ page, search, limit: 20 }),
   });
 
-  const createMutation = useMutation({
+  const _createMutation = useMutation({
     mutationFn: membersApi.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['members'] });
       toast.success('Member created successfully');
-      setShowAddModal(false);
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.error || 'Failed to create member');

@@ -5,7 +5,7 @@ import { assessmentsApi } from '../../utils/api';
 import { format } from 'date-fns';
 
 export default function AdminAssessments() {
-  const [page, setPage] = useState(1);
+  const [page] = useState(1);
 
   const { data, isLoading } = useQuery({
     queryKey: ['assessments', { page, limit: 20 }],
