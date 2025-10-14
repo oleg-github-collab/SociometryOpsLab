@@ -53,6 +53,37 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Debug endpoint
+app.get('/debug/db', async (req, res) => {
+  try {
+    const { PrismaClient } = await import('@prisma/client');
+    const prisma = new PrismaClient();
+
+    const memberCount = await prisma.member.count();
+    const adminCount = await prisma.adminUser.count();
+
+    await prisma.$disconnect();
+
+    res.json({
+      status: 'ok',
+      database: 'connected',
+      counts: {
+        members: memberCount,
+        admins: adminCount,
+      },
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      status: 'error',
+      database: 'failed',
+      error: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString(),
+    });
+  }
+});
+
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/members', memberRoutes);
