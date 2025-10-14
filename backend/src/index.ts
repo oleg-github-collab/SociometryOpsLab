@@ -95,8 +95,8 @@ app.get('/debug/db', async (req, res) => {
   }
 });
 
-// Debug frontend paths
-app.get('/debug/frontend', (req, res) => {
+// Debug frontend paths - MUST be before API routes
+app.get('/debug-frontend-info', (req, res) => {
   const fs = require('fs');
   const frontendPath = path.join(__dirname, 'public');
 
