@@ -72,10 +72,16 @@ app.use(
     res: express.Response,
     next: express.NextFunction
   ) => {
+    console.error('=== ERROR ===');
+    console.error('Path:', req.path);
+    console.error('Method:', req.method);
     console.error('Error:', err);
+    console.error('Stack:', err.stack);
+    console.error('=============');
     res.status(500).json({
       error: 'Internal server error',
-      message: process.env.NODE_ENV === 'development' ? err.message : undefined,
+      message: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
     });
   }
 );
