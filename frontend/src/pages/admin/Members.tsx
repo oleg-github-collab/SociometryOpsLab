@@ -14,17 +14,6 @@ export default function AdminMembers() {
     queryFn: () => membersApi.getAll({ page, search, limit: 20 }),
   });
 
-  const _createMutation = useMutation({
-    mutationFn: membersApi.create,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
-      toast.success('Member created successfully');
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.error || 'Failed to create member');
-    },
-  });
-
   const deleteMutation = useMutation({
     mutationFn: membersApi.delete,
     onSuccess: () => {
@@ -67,9 +56,6 @@ export default function AdminMembers() {
             onChange={(e) => setSearch(e.target.value)}
             className="input w-full md:w-96"
           />
-          <button onClick={() => setShowAddModal(true)} className="btn btn-primary">
-            + Add Member
-          </button>
         </div>
 
         {/* Members Table */}
