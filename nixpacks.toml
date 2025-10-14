@@ -7,5 +7,8 @@ cmds = ["cd backend && npm install"]
 [phases.build]
 cmds = ["cd backend && npx prisma generate", "cd backend && npm run build"]
 
+[phases.deploy]
+cmds = ["cd backend && npx prisma db push --accept-data-loss --skip-generate", "cd backend && npx prisma db seed"]
+
 [start]
-cmd = "cd backend && (npx prisma db push --accept-data-loss || true) && (npx prisma db seed || true) && node dist/index.js"
+cmd = "cd backend && node dist/index.js"
