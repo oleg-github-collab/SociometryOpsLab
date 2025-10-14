@@ -1,11 +1,19 @@
+# Nixpacks Monorepo Configuration
 [phases.setup]
 nixPkgs = ["nodejs_20"]
 
 [phases.install]
-cmds = ["cd backend && npm install"]
+cmds = [
+  "cd backend && npm install",
+  "cd frontend && npm install"
+]
 
 [phases.build]
-cmds = ["cd backend && npx prisma generate", "cd backend && npm run build"]
+cmds = [
+  "cd backend && npx prisma generate",
+  "cd backend && npm run build",
+  "cd frontend && npm run build"
+]
 
 [start]
 cmd = "cd /app/backend && chmod +x start.sh && ./start.sh"
