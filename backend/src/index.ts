@@ -27,8 +27,8 @@ const isProduction = process.env.NODE_ENV === 'production';
 app.use(helmet());
 
 // CORS - allow same origin in production (monorepo) or localhost in dev
-const corsOrigins = isProduction
-  ? [process.env.FRONTEND_URL, process.env.RAILWAY_PUBLIC_DOMAIN].filter(Boolean)
+const corsOrigins: string[] = isProduction
+  ? [process.env.FRONTEND_URL, process.env.RAILWAY_PUBLIC_DOMAIN].filter((url): url is string => Boolean(url))
   : ['http://localhost:5173', 'http://localhost:3000'];
 
 app.use(
