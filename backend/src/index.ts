@@ -98,26 +98,22 @@ app.get('/debug/db', async (req, res) => {
 // Debug frontend paths
 app.get('/debug/frontend', (req, res) => {
   const fs = require('fs');
-  const possiblePaths = [
-    path.join(__dirname, '../../frontend/dist'),
-    path.join(__dirname, '../../../frontend/dist'),
-    path.join(process.cwd(), 'frontend/dist'),
-    '/app/frontend/dist'
-  ];
+  const frontendPath = path.join(__dirname, 'public');
 
-  const pathsInfo = possiblePaths.map(p => ({
-    path: p,
-    exists: fs.existsSync(p),
-    isDir: fs.existsSync(p) && fs.statSync(p).isDirectory(),
-    files: fs.existsSync(p) ? fs.readdirSync(p).slice(0, 10) : []
-  }));
+  const pathInfo = {
+    path: frontendPath,
+    exists: fs.existsSync(frontendPath),
+    isDir: fs.existsSync(frontendPath) ? fs.statSync(frontendPath).isDirectory() : false,
+    files: fs.existsSync(frontendPath) ? fs.readdirSync(frontendPath) : [],
+    indexHtml: fs.existsSync(path.join(frontendPath, 'index.html'))
+  };
 
   res.json({
     __dirname,
     'process.cwd()': process.cwd(),
     NODE_ENV: process.env.NODE_ENV,
     isProduction,
-    paths: pathsInfo
+    frontendPath: pathInfo
   });
 });
 
@@ -129,30 +125,26 @@ app.use('/api/metrics', metricsRoutes);
 
 // Serve frontend static files in production
 if (isProduction) {
-  // Try multiple possible paths for frontend dist
-  const possiblePaths = [
-    path.join(__dirname, '../../frontend/dist'),
-    path.join(__dirname, '../../../frontend/dist'),
-    path.join(process.cwd(), 'frontend/dist'),
-    '/app/frontend/dist'
-  ];
-
-  let frontendPath = possiblePaths[0];
-
-  // Find the correct path
   const fs = require('fs');
-  for (const testPath of possiblePaths) {
-    if (fs.existsSync(testPath)) {
-      frontendPath = testPath;
-      console.log(`✅ Found frontend at: ${frontendPath}`);
-      break;
-    } else {
-      console.log(`❌ Frontend not found at: ${testPath}`);
-    }
+
+  // Frontend should be in dist/public after build
+  const frontendPath = path.join(__dirname, 'public');
+
+  console.log(`🔍 Looking for frontend at: ${frontendPath}`);
+
+  if (fs.existsSync(frontendPath)) {
+    console.log(`✅ Found frontend at: ${frontendPath}`);
+    const files = fs.readdirSync(frontendPath);
+    console.log(`📁 Frontend files: ${files.join(', ')}`);
+  } else {
+    console.error(`❌ Frontend not found at: ${frontendPath}`);
   }
 
-  // Serve static files
-  app.use(express.static(frontendPath));
+  // Serve static files with proper headers for SPA
+  app.use(express.static(frontendPath, {
+    maxAge: '1d',
+    etag: true
+  }));
 
   // SPA fallback - serve index.html for all non-API routes
   app.use((req, res, next) => {
@@ -166,7 +158,12 @@ if (isProduction) {
       res.sendFile(indexPath);
     } else {
       console.error(`❌ index.html not found at: ${indexPath}`);
-      res.status(404).json({ error: 'Frontend not found', path: indexPath });
+      res.status(404).json({
+        error: 'Frontend not found',
+        path: indexPath,
+        cwd: process.cwd(),
+        __dirname
+      });
     }
   });
 } else {
