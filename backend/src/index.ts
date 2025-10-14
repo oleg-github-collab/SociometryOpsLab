@@ -13,7 +13,7 @@ import assessmentRoutes from './routes/assessments';
 import metricsRoutes from './routes/metrics';
 
 // Import DB initialization
-import { initializeDatabase } from './db-init';
+import { initializeDatabase } from './db-init-simple';
 
 // Load environment variables
 dotenv.config();

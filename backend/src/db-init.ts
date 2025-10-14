@@ -20,9 +20,8 @@ export async function initializeDatabase() {
     if (!tablesExist) {
       console.log('Tables do not exist. Creating schema...');
 
-      // Create tables
+      // Create admin_users table
       await prisma.$executeRawUnsafe(`
-        -- CreateTable
         CREATE TABLE IF NOT EXISTS "admin_users" (
             "id" SERIAL NOT NULL,
             "username" VARCHAR(50) NOT NULL,
