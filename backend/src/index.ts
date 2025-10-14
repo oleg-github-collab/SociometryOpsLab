@@ -155,10 +155,10 @@ if (isProduction) {
   app.use(express.static(frontendPath));
 
   // SPA fallback - serve index.html for all non-API routes
-  app.get('*', (req, res) => {
-    // Skip API routes
+  app.use((req, res, next) => {
+    // Skip API and debug routes
     if (req.path.startsWith('/api') || req.path.startsWith('/health') || req.path.startsWith('/debug')) {
-      return res.status(404).json({ error: 'Route not found' });
+      return next();
     }
 
     const indexPath = path.join(frontendPath, 'index.html');
