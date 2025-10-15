@@ -3,7 +3,7 @@
 
 [build]
 builder = "NIXPACKS"
-buildCommand = "cd backend && npm install && npx prisma generate && npm run build && cd ../frontend && npm install && npm run build && cd .."
+buildCommand = "cd backend && npm install && npx prisma generate && npm run build && cd ../frontend && npm install && npm run build && cd .. && mkdir -p backend/dist/public && cp -rv frontend/dist/* backend/dist/public/ && ls -la backend/dist/public"
 watchPatterns = ["backend/**", "frontend/**"]
 
 [deploy]
