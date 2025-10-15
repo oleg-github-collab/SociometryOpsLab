@@ -1,23 +1,32 @@
-# Nixpacks Monorepo Configuration
+# OpsLab Analytics - Railway Monorepo Config
+# This builds both backend and frontend, then serves frontend from backend
+
 [phases.setup]
 nixPkgs = ["nodejs_20"]
 
 [phases.install]
 cmds = [
-  "cd backend && npm install",
-  "cd frontend && npm install"
+  "cd backend && npm ci --production=false",
+  "cd frontend && npm ci --production=false"
 ]
 
 [phases.build]
 cmds = [
+  # Build backend
   "cd backend && npx prisma generate",
   "cd backend && npm run build",
+
+  # Build frontend
   "cd frontend && npm run build",
-  "mkdir -p /app/backend/dist/public",
-  "cp -rv /app/frontend/dist/* /app/backend/dist/public/",
-  "ls -la /app/backend/dist/public",
-  "test -f /app/backend/dist/public/index.html && echo '✅ Frontend copied!' || echo '❌ Frontend copy FAILED!'"
+
+  # Copy frontend to backend public folder
+  "mkdir -p backend/dist/public",
+  "cp -r frontend/dist/* backend/dist/public/",
+
+  # Verify copy
+  "ls -la backend/dist/public | head -20",
+  "test -f backend/dist/public/index.html && echo '✅ SUCCESS: Frontend copied to backend/dist/public!' || (echo '❌ ERROR: Frontend copy failed!' && exit 1)"
 ]
 
 [start]
-cmd = "cd /app/backend && chmod +x start.sh && ./start.sh"
+cmd = "cd backend && node dist/index.js"
