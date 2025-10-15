@@ -13,10 +13,11 @@ cmds = [
   "cd backend && npx prisma generate",
   "cd backend && npm run build",
   "cd frontend && npm run build",
+  "ls -la frontend/dist",
   "mkdir -p backend/dist/public",
-  "cp -r frontend/dist/* backend/dist/public/ || echo 'Copy failed, trying alternative...'",
-  "ls -la frontend/dist || echo 'Frontend dist not found'",
-  "ls -la backend/dist/public || echo 'Public dir check'"
+  "cp -rv frontend/dist/* backend/dist/public/",
+  "ls -la backend/dist/public",
+  "test -f backend/dist/public/index.html && echo 'Frontend copied successfully!' || echo 'Frontend copy FAILED!'"
 ]
 
 [start]
